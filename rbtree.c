@@ -220,17 +220,70 @@ void Insert(){
 	}
 }
 
+struct node* FindNode(int key){
+	struct node* ptr = Head;
+	if (Head == NULL)
+	{
+		return NULL;
+	}
+	while(1){
+		if (ptr->name == key)
+		{
+			// printf("Found!\n");
+			return ptr;
+		}
+		else if (key < ptr->name)
+		{
+			if (ptr->left == NULL)
+			{
+				// printf("Not Found!\n");
+				return NULL;
+			}
+			else
+				ptr = ptr->left;
+		}
+		else
+		{
+			if (ptr->right == NULL)
+			{
+				// printf("Not Found\n");
+				return NULL;
+			}
+			else
+				ptr = ptr->right;
+		}
+	}
+}
+
+void Search(){
+	int key;
+	printf("Enter name to Search: ");
+	scanf("%d",&key);
+	if (FindNode(key) != NULL)
+	{
+		printf("Found\n");
+	}
+	else
+		printf("Not Found\n");
+}
+
 int main(int argc, char const *argv[])
 {
 	int opt;
 	do{
-		printf("Menu\n1.Insert\n2.PrintTree\n0.Exit\nEnter your choice: ");
+		printf("Menu\n1.Insert\n2.Search\n3.Delete\4.PrintTree\n0.Exit\nEnter your choice: ");
 		scanf("%d",&opt);
 		switch(opt){
 			case 1:
 				Insert();
 				break;
 			case 2:
+				Search();
+				break;
+			case 3:
+				// Delete();
+				break;
+			case 4:
 				printtree();
 				break;
 			case 0:

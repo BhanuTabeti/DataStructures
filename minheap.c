@@ -2,20 +2,21 @@
 #include <stdlib.h>
 int len,size = 0,*heap;
 
-void swap(int a,int b){
-	int temp;
-	temp = heap[a];
-	heap[a] = heap[b];
-	heap[b] = temp;
+void swap(int *a,int *b){
+	int temp = *a;
+	*a = *b;
+	*b = temp;
 	return;
 }
+
 void heapify(int i){
 	while (heap[i/2] > heap[i])
 	{
-		swap(i,i/2);
+		swap(&heap[i],&heap[i/2]);
 		i /= 2; 
 	}
 }
+
 void Insert(){
 	if (size == len)
 	{
@@ -42,24 +43,42 @@ void PrintHeap(){
 	printf("\n");
 }
 void DeleteMin(){
+	if (size == 0)
+	{
+		printf("Nothing to Delete\n");
+		return;
+	}
 	// swap(1,size--);
-	heap[1] = heap[size--];
+	// heap[1] = heap[size--];
+	// printf("%d %d\n",heap[1],heap[size] );
+	swap(&heap[1],&heap[size--]);
 	int i = 1;
+	// printf("%d %d\n",heap[1],heap[size] );
 	while((heap[i] > heap[2*i]) || (heap[i] > heap[2*i + 1]) && (i <= len/2)){
-		if (heap[2*i] < heap[2*i + 1])
+		if (size == 2*i && (heap[i] > heap[2*i]))
 		{
+			// printf("1\n");
+			swap(&heap[i],&heap[2*i]);
+			i *= 2;
+			// break;
+		}
+		else if (heap[2*i] < heap[2*i + 1])
+		{
+			// printf("2\n");
 			if (2*i > size)
 				break;
-			swap(i,2*i);
+			swap(&heap[i],&heap[2*i]);
 			i *= 2;
 		}
 		else
 		{
+			// printf("3\n");
 			if (2*i + 1 > size)
 				break;
-			swap(i,2*i+1);
+			swap(&heap[i],&heap[2*i+1]);
 			i *= 2;
 			i++;
+			// printf("4\n");
 		}
 	}
 }
@@ -77,6 +96,7 @@ void DeleteMin(){
 // 	}
 // 	printf("\n");
 // }
+
 int main(int argc, char const *argv[])
 {
 	printf("Initializing Heap\n");

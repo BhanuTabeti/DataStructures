@@ -50,12 +50,13 @@ void PrintHeap(){
 	}
 	printf("\n");
 }
+
 void DeleteMin(){
 	swap(&heap[1],&heap[size--]);
 	// heap[1] = heap[size--];
 	int i = 1;
 	while((heap[i].w >= heap[2*i].w) || (heap[i].w >= heap[2*i + 1].w) && (i <= len/2)){
-		if (size == 2*i)
+		if (size == 2*i && (heap[i].w >= heap[2*i].w))
 		{
 			swap(&heap[i],&heap[2*i]);
 			i *= 2;
@@ -140,6 +141,8 @@ int main(int argc, char const *argv[])
 	heap = (vertex *)malloc((V+1)*sizeof(vertex));
 	MakeHeap(V);
 	int graph[V][V],x,y,w;
+
+	// Input as Edges
 	for (int i = 0; i < V; ++i)
 	{
 		for (int j = 0; j < V; ++j)
