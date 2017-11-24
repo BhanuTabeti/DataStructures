@@ -6,6 +6,12 @@ typedef struct
 	int x,y,w;
 }edge;
 
+typedef struct 
+{
+	int rep;
+	int rank;
+}node;
+
 int E,V;
 
 
@@ -39,22 +45,33 @@ void QS(edge *a,int begin,int end){
 	}
 }
 
-int FindElem(int arr[],int key){
+int FindElem(node arr[],int key){
 	int temp = key;
-	while(arr[temp]!= temp){
-		temp = arr[temp];
+	while(arr[temp].rep != temp){
+		temp = arr[temp].rep;
 	}
 	return temp;
 }
 
 
-void Union(int arr[],edge e){
+void Union(node arr[],edge e){
 	int xset = FindElem(arr,e.x);
 	int yset = FindElem(arr,e.y);
-	arr[xset] = yset;
+	if (xset != yset)
+	{
+		if (arr[xset].rank > arr[yset].rank)
+		{
+			arr[yset].rep = xset;
+			arr[yset].rank += arr[xset].rank;
+		}
+		else{
+			arr[xset].rep = yset;
+			arr[xset].rank += arr[yset].rank;
+		}
+	}
 }
 
-void Kruskal(int arr[],edge list[]){
+void Kruskal(node arr[],edge list[]){
 	QS(list,0,E-1);
 	// for (int i = 0; i < E; ++i)
 	// {
@@ -83,10 +100,11 @@ int main(int argc, char const *argv[])
 	printf("Enter G(V E): ");
 	scanf("%d",&V);
 	scanf("%d",&E);
-	int arr[V+1];
+	node arr[V+1];
 	for (int i = 0; i < V + 1; ++i)
 	{
-		arr[i] = i;
+		arr[i].rep = i;
+		arr[i].rank = 1;
 	}
 	edge list[E];
 

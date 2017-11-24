@@ -221,8 +221,8 @@ void Insert(){
 }
 
 struct node* FindNode(int key){
-	struct node* ptr = Head;
-	if (Head == NULL)
+	struct node* ptr = Root;
+	if (Root == NULL)
 	{
 		return NULL;
 	}
@@ -271,7 +271,7 @@ int main(int argc, char const *argv[])
 {
 	int opt;
 	do{
-		printf("Menu\n1.Insert\n2.Search\n3.Delete\4.PrintTree\n0.Exit\nEnter your choice: ");
+		printf("Menu\n1.Insert\n2.Search\n3.Delete\n4.PrintTree\n0.Exit\nEnter your choice: ");
 		scanf("%d",&opt);
 		switch(opt){
 			case 1:

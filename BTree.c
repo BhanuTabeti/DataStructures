@@ -32,7 +32,7 @@ void display(struct btreeNode *ptr, int blanks){
         for(i=1; i<=blanks; i++)
             printf(" ");
         for (i=0; i < ptr->numkeys; i++){
-        	out++;
+        	// out++;
             printf("%d ",ptr->keys[i]);
         }
         printf("\n");
@@ -51,10 +51,10 @@ void SplitChild(struct btreeNode* ptr,int pos){
 	// Pushing Middle Element to Top
 	for (int i = ptr->numkeys - 1; i >=pos; --i)
 	{
-		printf("%d %d\n",ptr->keys[i],ptr->keys[i+1] );
+		// printf("%d %d\n",ptr->keys[i],ptr->keys[i+1] );
 
 		ptr->keys[i+1] = ptr->keys[i];
-		printf("%d %d\n",ptr->keys[i],ptr->keys[i+1] );
+		// printf("%d %d\n",ptr->keys[i],ptr->keys[i+1] );
 	}
 
 	ptr->keys[pos] = old->keys[Min_keys];

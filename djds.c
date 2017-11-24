@@ -1,15 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct 
+{
+	int rep;
+	int rank;
+}node;
 
-int FindElem(int arr[],int key){
+int FindElem(node arr[],int key){
 	int temp = key;
-	while(arr[temp]!= temp){
-		temp = arr[temp];
+	while(arr[temp].rep != temp){
+		temp = arr[temp].rep;
 	}
 	return temp;
 }
-void FindSet(int arr[]){
+
+void FindSet(node arr[]){
 	printf("Enter Element to Find:");
 	int key;
 	scanf("%d",&key);
@@ -19,7 +25,7 @@ void FindSet(int arr[]){
 }
 
 
-void Union(int arr[]){
+void Union(node arr[]){
 	printf("Enter Elements to Union(x y): ");
 	int x,y;
 	scanf("%d",&x);
@@ -28,20 +34,32 @@ void Union(int arr[]){
 	int yset = FindElem(arr,y);
 	if (xset != yset)
 	{
-		arr[xset] = yset;
+		if (arr[xset].rank > arr[yset].rank)
+		{
+			arr[yset].rep = xset;
+			arr[yset].rank += arr[xset].rank;
+		}
+		else{
+			arr[xset].rep = yset;
+			arr[xset].rank += arr[yset].rank;
+		}
 	}
 	else
 		printf("Both are in same Set\n");
 }
+
 int main(int argc, char const *argv[])
 {
 	printf("Initializing DisJoint Set\n");
 	printf("No of Vetices: ");
 	int len;
 	scanf("%d",&len);
-	int arr[len+1];
+	node arr[len+1];
 	printf("Enter %d Elements: ",len);
-	for (int i = 0; i <= len; ++i) arr[i] = i;
+	for (int i = 0; i <= len; ++i) {
+		arr[i].rep = i;
+		arr[i].rank = 1;
+	}
 
 	int opt;
 	do{
