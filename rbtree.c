@@ -242,4 +242,3 @@ int main(int argc, char const *argv[])
 	} while (opt != 0);
 	return 0;
 }
-
