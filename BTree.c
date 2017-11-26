@@ -14,7 +14,7 @@ struct btreeNode
 	struct btreeNode* child[Max_keys+1];
 };
 
-// int out = 0;
+int out = 0;
 struct btreeNode* root = NULL;
 
 void CreateEmptyTree(){
@@ -32,7 +32,7 @@ void display(struct btreeNode *ptr, int blanks){
         for(i=1; i<=blanks; i++)
             printf(" ");
         for (i=0; i < ptr->numkeys; i++){
-        	// out++;
+        	out++;
             printf("%d ",ptr->keys[i]);
         }
         printf("\n");
@@ -191,6 +191,7 @@ int getRightMax(struct btreeNode* ptr){
 }
 
 void mergeChildren(struct btreeNode* ptr,int index,struct btreeNode* prevPtr,struct btreeNode* nextPtr){
+	printf("Entered Merging Nodes \nParent Key: %d Left:%d Right :%d\n",ptr->keys[index],prevPtr->keys[0],nextPtr->keys[0]);
 	prevPtr->keys[Min_keys] = ptr->keys[index];
 	for (int i = Min_keys + 1,j = 0; i < Max_keys; ++i)
 	{
@@ -208,7 +209,7 @@ void mergeChildren(struct btreeNode* ptr,int index,struct btreeNode* prevPtr,str
 	for (int i = index; i < ptr->numkeys; ++i)
 	{
 		ptr->keys[i] = ptr->keys[i + 1];
-		ptr->child[i+1] = ptr->child[i+2];
+		ptr->child[i + 1] = ptr->child[i+2];
 	}
 
 	ptr->numkeys--;
@@ -222,18 +223,18 @@ void mergeChildren(struct btreeNode* ptr,int index,struct btreeNode* prevPtr,str
 }
 
 void Borrowfromleft(struct btreeNode* ptr,int index,struct btreeNode* leftbro,struct btreeNode* prevPtr){
-	for (int i = Min_keys - 1; i >= 0; --i)
+	prevPtr->numkeys++;
+	for (int i = prevPtr->numkeys - 1; i > 0; --i)
 	{
 		prevPtr->keys[i] = prevPtr->keys[i-1];
 	}
 	prevPtr->keys[0] = ptr->keys[index];
-	prevPtr->numkeys++;
 
 	ptr->keys[index] = leftbro->keys[leftbro->numkeys - 1];
 
 	if (!leftbro->leaf)
 	{
-		for (int i = Min_keys; i >= 0; --i)
+		for (int i = prevPtr->numkeys; i >= 0; --i)
 		{
 			prevPtr->child[i] = prevPtr->child[i-1];
 		}
@@ -243,103 +244,130 @@ void Borrowfromleft(struct btreeNode* ptr,int index,struct btreeNode* leftbro,st
 	leftbro->numkeys--;
 }
 
-void Borrowfromright(struct btreeNode* ptr,int index,struct btreeNode* prevPtr,struct btreeNode* nextPtr){
-	prevPtr->keys[prevPtr->numkeys] = ptr->keys[index];
-	prevPtr->numkeys++;
-	ptr->keys[index] = nextPtr->keys[0];
-	for (int i = 0; i < nextPtr->numkeys; ++i)
+void Borrowfromright(struct btreeNode* ptr,int index,struct btreeNode* nextPtr,struct btreeNode* prevPtr){
+	printf("Entered Borrowfromright\nParent Key: %d Left:%d Right :%d\n",ptr->keys[index],nextPtr->keys[0],prevPtr->keys[0] );
+	nextPtr->keys[nextPtr->numkeys] = ptr->keys[index];
+	nextPtr->numkeys++;
+	ptr->keys[index] = prevPtr->keys[0];
+	for (int i = 0; i < prevPtr->numkeys - 1; ++i)
 	{
 		nextPtr->keys[i] = nextPtr->keys[i+1];
 	}
-	if (!nextPtr->leaf)
+	if (!prevPtr->leaf)
 	{
-		prevPtr->child[prevPtr->numkeys] = nextPtr->child[0];
-		for (int i = 0; i < nextPtr->numkeys + 1; ++i)
+		nextPtr->child[nextPtr->numkeys] = prevPtr->child[0];
+		for (int i = 0; i < prevPtr->numkeys; ++i)
 		{
-			nextPtr->child[i] = nextPtr->child[i+1];
+			prevPtr->child[i] = prevPtr->child[i+1];
 		}
 	}
-	nextPtr->numkeys--;
+	prevPtr->numkeys--;
 }
 
 void DeleteNode(int key,struct btreeNode* ptr){
+	printf("\n\nEntered DeleteNode : key is %d , ptr of node : %d\n",key,ptr->keys[0] );
 	if (ptr->leaf)
 	{
+		printf("Entered leaf condition : key is %d , ptr of node : %d\n",key,ptr->keys[0] );
 		int i = 0;
 		while(i < ptr->numkeys && key > ptr->keys[i]){
 			i++;
 		}
+		printf("i is %d\n",i );
 		if (key == ptr->keys[i])
 		{
-			for (; i < ptr->numkeys; ++i)
+			for (; i < ptr->numkeys - 1; ++i)
 			{
 				ptr->keys[i] = ptr->keys[i+1];
 			}
 			ptr->numkeys--;
 		}
-		else
+		else{
 			printf("Element not in Tree\n");
+			return;
+		}
 	}
 	else
 	{
+		printf("Entered Not Leaf\n");
 		int i = 0;
 		struct btreeNode* prevPtr = NULL ,*nextPtr = NULL;
 		while (i < ptr->numkeys && key > ptr->keys[i]){
 			i++;
 		}
+		printf("i is %d , ptr of node : %d\n",i,ptr->keys[0]);
 		if (i < ptr->numkeys && key == ptr->keys[i])
 		{
+			printf("Entered key present in non leaf node condition\n");
 			prevPtr = ptr->child[i];
 			nextPtr = ptr->child[i+1];
 
 			if (prevPtr->numkeys > Min_keys)
 			{
+				printf("Entered Left Child More\n");
 				int temp = getLeftMax(prevPtr);
 				ptr->keys[i] = temp;
 				DeleteNode(temp,prevPtr);
 			}
 			else if (nextPtr->numkeys > Min_keys)
 			{
+				printf("Entered Right Child More\n");
 				int temp = getRightMax(nextPtr);
 				ptr->keys[i] = temp;
 				DeleteNode(temp,nextPtr);
 			}
 			else
 			{
+				printf("Entered No Child have more\n");
 				mergeChildren(ptr,i,prevPtr,nextPtr);
 				DeleteNode(key,prevPtr);
 			}
 		}
 		else{
+			printf("Entered key not present in non leaf node condition\n");
 			prevPtr = ptr->child[i];
 			struct btreeNode* leftbro = NULL;
 			if (i<ptr->numkeys)
 			{
+				// printf("Entered key not present in last child\n");
 				nextPtr =ptr->child[i+1];
 			}
 			if (i > 0)
 			{
+				// printf("Entered key not present in first child\n");
 				leftbro = ptr->child[i - 1];
 			}
 
 			if (Min_keys == prevPtr->numkeys)
 			{
+				printf("Entered Child contains Exact Min_keys\n");
 				if (leftbro != NULL && leftbro->numkeys > Min_keys)
 				{
+					printf("Entered key not present in first child && left child more than minimum\n");
 					Borrowfromleft(ptr,i-1,leftbro,prevPtr);
 				}
 				else if (nextPtr != NULL && nextPtr->numkeys > Min_keys)
 				{
+					printf("Entered key not present in last child && Right child more than minimum\n");
 					Borrowfromright(ptr,i,prevPtr,nextPtr);
 				}
 				else if (leftbro != NULL)
 				{
-					mergeChildren(root,i-1,leftbro,prevPtr);
+					printf("Entered key not present in first child && left child not more than minimum\n");
+					printf("Merging %d %d nodes\n",leftbro->keys[0],prevPtr->keys[0] );
+					mergeChildren(ptr,i-1,leftbro,prevPtr);
 					prevPtr = leftbro;
 				}
-				else
-					mergeChildren(root,i,prevPtr,nextPtr);
+				else{
+					printf("Entered key not present in last child && left child not more than minimum\n");
+					printf("Merging %d %d nodes\n",prevPtr->keys[0],nextPtr->keys[0] );
+					mergeChildren(ptr,i,prevPtr,nextPtr);
+				}
 			}
+			printf("Recursing DeleteNode!\n\n");
+				out = 0;
+				display(root,0);
+				printf("%d\n",out );
 			DeleteNode(key,prevPtr);
 		}
 
@@ -350,6 +378,7 @@ void Delete(){
 	int key;
 	printf("Enter key to Delete: ");
 	scanf("%d",&key);
+	printf("--------------------\nDeletion Process\n");
 	DeleteNode(key,root);
 }
 
@@ -372,7 +401,10 @@ int main(int argc, char const *argv[])
 				Delete();
 				break;
 			case 4 :
+				out = 0;
 				display(root,0);
+				printf("No of Current Nodes in Tree : %d\n",out );
+				break;
 			case 0:
 				break;
 			default:

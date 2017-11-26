@@ -143,6 +143,7 @@ int main(int argc, char const *argv[])
 	int graph[V][V],x,y,w;
 
 	// Input as Edges
+	printf("Vetices are from 0 to V\n");
 	for (int i = 0; i < V; ++i)
 	{
 		for (int j = 0; j < V; ++j)

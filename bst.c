@@ -217,7 +217,7 @@ int main(int argc, char const *argv[])
 {
 	int opt;
 	do{
-		system("clear");
+		//system("clear");
 		printtree();
 		printf("Menu\n1.Insert\n2.Search\n3.Delete\n0.Exit\nEnter your choice: ");
 		scanf("%d",&opt);
